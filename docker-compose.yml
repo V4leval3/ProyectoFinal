@@ -1,0 +1,59 @@
+version: '3.9'
+services:
+  # 1. Base de Datos (PostgreSQL)
+  db:
+    image: postgres:15-alpine
+    container_name: postgres_db
+    environment:
+      POSTGRES_DB: proyectos_tecsup
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 7630
+    ports:
+      - "5432:5432"
+    volumes:
+      # Persistencia de datos (para que la data no se pierda al apagar el contenedor)
+      - postgres_data:/var/lib/postgresql/data
+  
+  # 2. Backend de Java (Spring Boot)
+  backend-java:
+    build: 
+      context: ./tecsup_proyectos # Ruta al Dockerfile
+    container_name: backend_springboot
+    ports:
+      - "8080:8080"
+    environment:
+      # CRÍTICO: Conexión a la DB usando el nombre del servicio 'db'
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/proyectos_tecsup
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 7630
+    depends_on:
+      - db # Esperar a que la DB esté lista
+
+  # 3. Backend de Python (Django)
+  backend-python:
+    build: 
+      context: ./empresariales # Ruta al Dockerfile
+    container_name: backend_django
+    ports:
+      - "8000:8000"
+    command: python manage.py runserver 0.0.0.0:8000 # Ejecutar el servidor
+    environment:
+      # CRÍTICO: Conexión a la DB usando el nombre del servicio 'db'
+      DATABASE_URL: postgres://postgres:7630@db:5432/proyectos_tecsup
+    depends_on:
+      - db # Esperar a que la DB esté lista
+
+  # 4. Frontend (Vite/React)
+  frontend:
+    build: 
+      context: ./frontend # Ruta al Dockerfile
+    container_name: frontend_vite
+    ports:
+      # Mapea tu puerto local 5173 al puerto 80 dentro del contenedor (Nginx)
+      - "5173:80" 
+    depends_on:
+      - backend-java
+      - backend-python
+      
+volumes:
+  postgres_data:
