@@ -26,9 +26,8 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/proyectos_tecsup
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: 7630
-      # Stripe secret key (test)
-      # Stripe test key should not be committed. Use environment variable or Docker secrets in CI.
-      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-"<replace-with-test-key-in-env>"}
+      # Stripe secret key - Use environment variable for security
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
     depends_on:
       - db # Esperar a que la DB esté lista
 

@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-tz8%w-n*1+ai_dnpty(7a4upjsfi3@l2xy%cyoo0+b5l*&hzk#
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']  # Allow all hosts in development
 
 
 # Application definition
@@ -44,16 +44,32 @@ INSTALLED_APPS = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",  # CRÍTICO: El puerto por defecto de Vite/React
-    "http://127.0.0.1:5173",  # CRÍTICO: Para asegurar compatibilidad local
-    "http://localhost:3000",  # Puedes dejar este si quieres, pero no es el que usas
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "http://localhost:3000",
+    "http://frontend_vite:5173",
+]
+
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
 ]
 
 CORS_ALLOW_METHODS = [
     'DELETE',
     'GET',
+    'HEAD',
     'OPTIONS',
-    'POST',  # El Login y Registro son peticiones POST
+    'PATCH',
+    'POST',
     'PUT',
 ]
 

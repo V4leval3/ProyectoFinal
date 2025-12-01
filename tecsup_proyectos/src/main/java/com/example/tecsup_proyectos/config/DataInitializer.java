@@ -16,35 +16,26 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        if (proyectoRepository.count() == 0) {
+        // Only seed if DB is completely empty AND no SQL files were run.
+        // If you want to restore full data, run RESTORE_FULL_DB.sql manually or via pgAdmin.
+        // This prevents overwriting with dummy data.
+        long count = proyectoRepository.count();
+        
+        if (count == 0) {
+            // DB is empty: seed one minimal project as fallback, but user should restore full data
             Proyecto p1 = new Proyecto();
-            p1.setNombre("Control de LED con Arduino");
-            p1.setDescripcionCorta("Sistema simple de control de LED RGB mediante botones y Arduino.");
+            p1.setNombre("Proyecto de Ejemplo (Restaurar datos completos vía SQL)");
+            p1.setDescripcionCorta("DB vacía detectada. Ejecuta RESTORE_FULL_DB.sql en pgAdmin para cargar todos los proyectos.");
             p1.setTecnologiasUsadas("Arduino, C++");
-            p1.setIntegrantesDetalle("2 alumnos: Juan Perez, Maria Gomez");
+            p1.setIntegrantesDetalle("[{\"nombre\": \"Sistema\", \"carrera\": \"Inicialización\", \"ciclo\": 0}]");
             p1.setComplejidadNivel(1);
-            p1.setVistasContador(120);
+            p1.setVistasContador(0);
             p1.setDisponibleParaPatrocinio(true);
             p1.setMiembrosDisponibles(3);
             proyectoRepository.save(p1);
-
-            Proyecto p2 = new Proyecto();
-            p2.setNombre("ParkingTec: Gestor de Estacionamiento Inteligente");
-            p2.setDescripcionCorta("Control de acceso y ocupación en tiempo real usando sensores y MQTT.");
-            p2.setTecnologiasUsadas("Raspberry Pi, MQTT, Node.js");
-            p2.setIntegrantesDetalle("3 alumnos: Luis A., Carla R., Diego S.");
-            p2.setComplejidadNivel(2);
-            p2.setVistasContador(230);
-            proyectoRepository.save(p2);
-
-            Proyecto p3 = new Proyecto();
-            p3.setNombre("Campus Virtual 3D: Tecsup XR");
-            p3.setDescripcionCorta("Modelo inmersivo del campus de Tecsup utilizando VR para visitas guiadas.");
-            p3.setTecnologiasUsadas("Unity, Blender, WebXR");
-            p3.setIntegrantesDetalle("4 alumnos: Ana, Pedro, Jose, Lucia");
-            p3.setComplejidadNivel(3);
-            p3.setVistasContador(540);
-            proyectoRepository.save(p3);
+            System.out.println("[DataInitializer] DB was empty. Created 1 minimal placeholder project. RUN RESTORE_FULL_DB.sql to load all 15+ projects.");
+        } else {
+            System.out.println("[DataInitializer] DB already has " + count + " projects. Skipping seeding.");
         }
     }
 }
