@@ -5,9 +5,11 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
+@Table(name = "proyectos")
 @Data 
 public class Proyecto {
 
@@ -26,5 +28,8 @@ public class Proyecto {
     private Integer vistasContador = 0; 
     private boolean disponibleParaPatrocinio = true; 
 
-    private Integer miembrosDisponibles = 3; 
+    private Integer miembrosDisponibles = 3;
+    
+    @Column(name = "cuenta_bancaria")
+    private String cuentaBancaria;
 }

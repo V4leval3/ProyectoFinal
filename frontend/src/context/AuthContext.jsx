@@ -1,10 +1,10 @@
-// src/context/AuthContext.jsx (VERSION FINAL Y CORREGIDA PARA UNICIDAD DE ID)
+// src/context/AuthContext.jsx (VERSION FINAL Y CORREGIDA PARA UNICIDAD DE ID + ADMIN ROLE)
 
 import React, { createContext, useState, useContext, useEffect } from 'react'; 
 import axios from 'axios';
 
 const AuthContext = createContext();
-const API_DJANGO_BASE = 'http://127.0.0.1:8000/api'; 
+const API_DJANGO_BASE = '/api';
 const API_DJANGO_LOGIN = `${API_DJANGO_BASE}/token/`; 
 const API_DJANGO_REGISTER = `${API_DJANGO_BASE}/register/`;
 
@@ -26,11 +26,12 @@ export const AuthProvider = ({ children }) => {
     // Lectura inicial del token
     const [token, setToken] = useState(localStorage.getItem('access_token') || null);
     
-    // Lectura inicial del username y id activo para mantener la sesión al recargar
+    // Lectura inicial del username, id y admin flag activo para mantener la sesión al recargar
     const initialUserId = localStorage.getItem('active_user_id') ? parseInt(localStorage.getItem('active_user_id')) : null;
     const initialUsername = localStorage.getItem('active_username') || null;
+    const initialIsAdmin = localStorage.getItem('is_admin') === 'true';
     
-    const [user, setUser] = useState(token && initialUserId ? { username: initialUsername, id: initialUserId } : null);
+    const [user, setUser] = useState(token && initialUserId ? { username: initialUsername, id: initialUserId, isAdmin: initialIsAdmin } : null);
     const [error, setError] = useState(null);
 
     // Efecto para configurar Axios Headers al cambiar el token
@@ -46,22 +47,23 @@ export const AuthProvider = ({ children }) => {
     const login = async (username, password) => {
         try {
             const response = await axios.post(API_DJANGO_LOGIN, { username, password });
-            const { access, refresh } = response.data;
+            const { access, refresh, is_admin } = response.data;
             
             // 🚨 CRÍTICO: Gestionar el ID único por nombre de usuario
             let userId = localStorage.getItem(`user_id_for_${username}`) 
                         ? parseInt(localStorage.getItem(`user_id_for_${username}`)) 
                         : generateMockId(username);
 
-            // Guardar tokens y el ID activo
+            // Guardar tokens, el ID activo e is_admin flag
             localStorage.setItem('access_token', access);
             localStorage.setItem('refresh_token', refresh);
             localStorage.setItem(`user_id_for_${username}`, userId); // Guardamos el ID específico
             localStorage.setItem('active_user_id', userId); // ID activo para las peticiones
             localStorage.setItem('active_username', username);
+            localStorage.setItem('is_admin', is_admin ? 'true' : 'false');
 
             setToken(access);
-            setUser({ username, id: userId }); 
+            setUser({ username, id: userId, isAdmin: is_admin }); 
             setError(null);
             return true;
         } catch (err) {
@@ -77,6 +79,7 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem('refresh_token');
         localStorage.removeItem('active_user_id');
         localStorage.removeItem('active_username');
+        localStorage.removeItem('is_admin');
         setToken(null);
         setUser(null);
     };

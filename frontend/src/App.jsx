@@ -11,11 +11,9 @@ import HomePage from './pages/Home';
 import { useAuth } from './context/AuthContext'; 
 import ListaInteresPage from './pages/ListaInteresPage';
 import ProyectoDetallePage from './pages/ProyectoDetallePage';
-
-// ⚠️ DEFINICIÓN TEMPORAL Y CRÍTICA:
-// Esta es la definición temporal de SoportePage. 
-// La dejamos aquí hasta que creemos el archivo src/pages/Soporte.jsx
-const SoportePage = () => <div className="p-5"><h2>Área de Soporte (Pendiente)</h2><p>Aquí irá el formulario de tickets, conectado a la API de Django.</p></div>;
+import AdminReclutamientos from './pages/AdminReclutamientos';
+import SoportePage from './pages/Soporte';
+import AdminLogin from './pages/AdminLogin';
 
 
 function App() {
@@ -29,7 +27,8 @@ function App() {
                 <Route path="/register" element={<RegisterPage />} />
                 <Route path="/soporte" element={<SoportePage />} />
                 <Route path="/lista" element={<ListaInteresPage />} />
-                <Route path="/soporte" element={<SoportePage />} />
+                <Route path="/admin/reclutamientos" element={<AdminReclutamientos />} />
+                <Route path="/admin/login" element={<AdminLogin />} />
                 <Route path="/proyecto/:id" element={<ProyectoDetallePage />} />
             </Routes>
         </Router>

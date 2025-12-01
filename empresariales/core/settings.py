@@ -108,9 +108,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'proyectos_tecsup',
-        'USER': 'postgres',
-        'PASSWORD': '7630',
-        'HOST': 'localhost',
+        'USER': 'postgres', 
+        'PASSWORD': '7630', 
+        'HOST': 'db', 
         'PORT': '5432',
     }
 }

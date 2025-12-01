@@ -24,7 +24,7 @@ public class ListaInteresController {
     @Autowired
     private ProyectoRepository proyectoRepository;
 
-    private static final int LIMITE_PROYECTOS = 5;
+    private static final int LIMITE_PROYECTOS = 3;
 
     // 1. Obtener la lista del usuario (GET)
     // GET http://localhost:8080/api/lista-interes/1
@@ -80,17 +80,8 @@ public class ListaInteresController {
             return new ResponseEntity<>("La lista de interés está vacía. No hay proyectos para contactar.", HttpStatus.BAD_REQUEST);
         }
 
-        // 1. Lógica de Reducción de Stock (Inventario): Poner proyectos como NO disponibles
-        for (ListaInteres item : lista) {
-            // Se asume que al hacer checkout, el proyecto es 'adquirido' o 'reservado'
-            item.getProyecto().setDisponibleParaPatrocinio(false); // Stock se reduce
-            proyectoRepository.save(item.getProyecto());
-        }
-
-        // 2. Vaciar la Lista de Interés (Carrito vacío)
-        listaInteresRepository.deleteAll(lista);
-
-        return new ResponseEntity<>("Petición de contacto enviada con éxito. Los proyectos han sido reservados y tu lista ha sido vaciada.", HttpStatus.OK);
+        // No modificamos stock ni vaciamos la lista: la petición de contacto es informativa
+        return new ResponseEntity<>("Petición de contacto enviada con éxito. No se modificó el estado de los proyectos ni se vació la lista.", HttpStatus.OK);
     }
 
     // 4. Opcional: Añadir un DELETE para remover items de la lista (Lógica de Carrito)

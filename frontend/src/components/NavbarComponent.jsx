@@ -28,6 +28,9 @@ const NavbarComponent = () => {
                         <Nav.Link as={Link} to="/">Proyectos</Nav.Link>
                         <Nav.Link as={Link} to="/lista">Lista de Interés</Nav.Link>
                         <Nav.Link as={Link} to="/soporte">Soporte</Nav.Link>
+                        {user?.isAdmin && (
+                            <Nav.Link as={Link} to="/admin/reclutamientos">Peticiones de Reclutamiento</Nav.Link>
+                        )}
                     </Nav>
                     <Nav>
                         {user ? (
@@ -56,6 +59,14 @@ const NavbarComponent = () => {
                                     Registrarme
                                 </Button>
                             </>
+                        )}
+                    </Nav>
+                    {/* Admin quick links: show admin panel link if admin_jwt present or user.isAdmin */}
+                    <Nav className="ms-3">
+                        { (user?.isAdmin || localStorage.getItem('admin_jwt')) ? (
+                            <Nav.Link as={Link} to="/admin/reclutamientos">Admin</Nav.Link>
+                        ) : (
+                            <Nav.Link as={Link} to="/admin/login">Admin Login</Nav.Link>
                         )}
                     </Nav>
                 </Navbar.Collapse>

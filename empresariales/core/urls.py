@@ -17,16 +17,14 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.contrib import admin
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-)
+from rest_framework_simplejwt.views import TokenRefreshView
+from usuarios.views import CustomTokenObtainPairView
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     # 1. Login (Obtener Token): POST /api/token/
-    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
     # 2. Refrescar Token: POST /api/token/refresh/
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     # Incluir las URLs de nuestra app 'usuarios' para el registro

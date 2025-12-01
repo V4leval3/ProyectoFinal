@@ -26,17 +26,23 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/proyectos_tecsup
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: 7630
+      # Stripe secret key (test)
+      # Stripe test key should not be committed. Use environment variable or Docker secrets in CI.
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-"<replace-with-test-key-in-env>"}
     depends_on:
       - db # Esperar a que la DB esté lista
 
   # 3. Backend de Python (Django)
   backend-python:
     build: 
-      context: ./empresariales # Ruta al Dockerfile
+      context: ./empresariales
     container_name: backend_django
     ports:
       - "8000:8000"
-    command: python manage.py runserver 0.0.0.0:8000 # Ejecutar el servidor
+    # 🚨 CRÍTICO: Usar el script de entrada en lugar del comando simple
+    command: /bin/sh -c "python manage.py migrate --noinput && python manage.py runserver 0.0.0.0:8000"
+    # Nota: Si el script entrypoint.sh no funciona, usaremos este comando simple
+    # El uso de 'command' aquí intenta correr migrate y luego runserver.
     environment:
       # CRÍTICO: Conexión a la DB usando el nombre del servicio 'db'
       DATABASE_URL: postgres://postgres:7630@db:5432/proyectos_tecsup
@@ -49,11 +55,13 @@ services:
       context: ./frontend # Ruta al Dockerfile
     container_name: frontend_vite
     ports:
-      # Mapea tu puerto local 5173 al puerto 80 dentro del contenedor (Nginx)
-      - "5173:80" 
+      # Mapea puerto 80 (HTTP)
+      - "5173:80"
     depends_on:
       - backend-java
       - backend-python
+    environment:
+      STRIPE_PUBLISHABLE_KEY: pk_test_51SZE8z0O6jtgklFz8a8b06o9pOp9fHT5lBJ7N1cKrVmsJllpBLR9DssG0onQgnrhANJQoO8xMlArnQRQoBzOhis400aUHu70We
       
 volumes:
   postgres_data:
